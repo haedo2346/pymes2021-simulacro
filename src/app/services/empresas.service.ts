@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 import {
   HttpClient,
   HttpHeaders,
@@ -7,8 +6,11 @@ import {
   HttpParams
 } from '@angular/common/http';
 import { of } from 'rxjs';
+import { Empresa } from '../models/empresa';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class EmpresasService {
   resourceURL: string;
 
@@ -18,5 +20,21 @@ export class EmpresasService {
 
   get() {
     return this.httpClient.get(this.resourceURL);
+  }
+
+  getById(Id: number) {
+    return this.httpClient.get(this.resourceURL + Id);
+  }
+
+  post(obj: Empresa) {
+    return this.httpClient.post(this.resourceURL, obj);
+  }
+
+  put(Id: number, obj: Empresa) {
+    return this.httpClient.put(this.resourceURL + Id, obj);
+  }
+
+  delete(Id) {
+    return this.httpClient.delete(this.resourceURL + Id);
   }
 }

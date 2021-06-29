@@ -1,27 +1,13 @@
 <h2>{{Titulo}} <small>{{TituloAccionABMC[AccionABMC]}}</small></h2>
+
 <!-- Formulario Filtro de búsqueda, se ve cuando la AccionABMC es "L"(busqueda/listado)-->
-<form
-  name="FormBusqueda"
-  [formGroup]="FormBusqueda"
-  class="bg-light"
-  *ngIf="AccionABMC == 'L'"
->
-  <div class="form-group row">
-    <label class="col-form-label col-sm-2 offset-sm-1">
-      Razon Social:
-    </label>
-    <div class="col-sm-3">
-      <input
-        type="text"
-        name="RazonSocial"
-        class="form-control"
-        formControlName="RazonSocial"
-      />
-    </div>
+<form name="FormBusqueda" [formGroup]="FormBusqueda" class="bg-light" *ngIf="AccionABMC == 'L'">
+
+
 
   <!-- Botones -->
   <div class="row justify-content-center">
-    <button type="button" class="btn btn-primary" (click)="Pagina=1;Buscar();">
+    <button type="button" class="btn btn-primary" (click)="Buscar()">
       <span class="fas fa-search"> </span> Buscar
     </button>
     &nbsp;
@@ -30,6 +16,7 @@
       Agregar
     </button>
   </div>
+
 </form>
 
 <!-- Tabla de resutados de busqueda y Paginador-->
@@ -37,7 +24,6 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th class="text-center">Id Empresa</th>
         <th class="text-center">Razon Social</th>
         <th class="text-center">Cantidad Empleados</th>
         <th class="text-center">Fecha Fundacion</th>
@@ -46,11 +32,10 @@
     </thead>
 
     <tbody>
-      <tr *ngFor="let empresa of Empresas">
-        <td>{{empresa.IdEmpresa}}</td>
-        <td>{{empresa.RazonSocial| uppercase}}</td>
-        <td>{{empresa.CantidadEmpleados}}</td>
-        <td>{{empresa.FechaFundacion| date:'dd/MM/yyyy'}}</td>
+      <tr *ngFor="let item of Items">
+        <td>{{item.RazonSocial| uppercase}}</td>
+        <td>{{item.CantidadEmpleados}}</td>
+        <td>{{item.FechaFundacion| date:'dd/MM/yyyy'}}</td>
 
         <td class="text-center text-nowrap">
           <button
@@ -70,7 +55,15 @@
           >
             <span class="fas fa-pencil-alt"></span>
           </button>
-        </td>
+
+          <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          title="Eliminar"
+          (click)="Eliminar(item)"
+        >
+          <span class="fas fa-times"></span>
+        </button>
 
         </td>
       </tr>
@@ -80,11 +73,7 @@
 </div>
 
 <!--No se encontraron registros-->
-<div
-  id="divMsjFormBusqueda"
-  class="alert alert-info"
-  *ngIf="AccionABMC == 'L' && Items?.length== 0"
->
+<div id="divMsjFormBusqueda" class="alert alert-info" *ngIf="AccionABMC == 'L' && Items?.length== 0">
   <span class="fas fa-exclamation-sign"></span>{{Mensajes['SD']}}
   <!-- texto: No se encontraron registros -->
 </div>
@@ -92,25 +81,6 @@
 <!-- Registro en Alta,Modificacion o Consulta -->
 <form name="FormRegistro" *ngIf="AccionABMC != 'L'" [formGroup]="FormRegistro">
   <fieldset [disabled]="AccionABMC==='C'">
-
-    <!--campo IdEmpresa-->
-    <div class="form-group row">
-      <label class="col-form-label col-sm-2 offset-sm-2" for="IdEmpresa"
-        >Id Empresa</label
-      >
-      <div class="col-sm-6">
-        <select
-          name="IdEmpresa"
-          [attr.disabled]="true"
-          class="form-control"
-          formControlName="IdEmpresa"
-        >
-          <option *ngFor="let empresa of OpcionesIdEmpresa" [ngValue]="empresa.IdEmpresa">
-            ‌{{ empresa.RazonSocial }}
-          </option>
-        </select>
-      </div>
-    </div>
 
     <!--campo Razon Social-->
     <div class="form-group row">
@@ -120,6 +90,7 @@
       <div class="col-sm-6">
         <input
           type="text"
+          name="RazonSocial"
           class="form-control text-uppercase"
           formControlName="RazonSocial"
           [ngClass]="{'is-invalid':(FormRegistro.controls.RazonSocial.touched || submitted) && FormRegistro.controls.RazonSocial.errors}"
@@ -133,36 +104,7 @@
         <span
           class="text-danger"
           *ngIf="(FormRegistro.controls.RazonSocial.touched || submitted) && (FormRegistro.controls.RazonSocial.errors?.minlength || FormRegistro.controls.RazonSocial.errors?.maxlength)"
-          >Dato texto de 5 a 55 caracteres</span
-        >
-      </div>
-    </div>
-
-    <!--campo precio-->
-    <div class="row form-group">
-      <label class="col-form-label col-sm-2 offset-sm-2" for="Precio">
-        Precio <span class="text-danger">*</span>
-      </label>
-      <div class="col-sm-6">
-        <input
-          type="text"
-          name="Precio"
-          class="form-control"
-          formControlName="Precio"
-          [ngClass]="{'is-invalid': (FormRegistro.controls.Precio.touched || submitted) && FormRegistro.controls.Precio.errors} "
-        />
-        <span
-          class="text-danger"
-          *ngIf="(FormRegistro.controls.Nombre.touched || submitted) && FormRegistro.controls.Precio.errors && FormRegistro.controls.Precio.errors.required "
-        >
-          Dato requerido
-        </span>
-        <span
-          class="text-danger"
-          *ngIf="(FormRegistro.controls.Nombre.touched || submitted) && FormRegistro.controls.Precio.errors?.pattern"
-        >
-          Dato numérico, 1 a 7 dígitos.
-        </span>
+          >Dato texto de 5 a 55 caracteres</span>
       </div>
     </div>
 
@@ -194,37 +136,9 @@
       </div>
     </div>
 
-    <!--campo codigodebarra-->
-    <div class="form-group row">
-      <label class="col-form-label col-sm-2 offset-sm-2" for="CodigoDeBarra">
-        Codigo De Barra <span class="text-danger">*</span>
-      </label>
-      <div class="col-sm-6">
-        <input
-          type="text"
-          name="CodigoDeBarra"
-          class="form-control"
-          formControlName="CodigoDeBarra"
-          [ngClass]="{'is-invalid': (FormRegistro.controls.CodigoDeBarra.touched || submitted) && FormRegistro.controls.CodigoDeBarra.errors}"
-        />
-        <span
-          class="text-danger"
-          *ngIf="(FormRegistro.controls.CodigoDeBarra.touched || submitted) && FormRegistro.controls.CodigoDeBarra.errors && FormRegistro.controls.CodigoDeBarra.errors.required "
-        >
-          Dato requerido
-        </span>
-        <span
-          class="text-danger"
-          *ngIf="(FormRegistro.controls.Nombre.touched || submitted) && FormRegistro.controls.CodigoDeBarra.errors?.pattern"
-        >
-          Dato numérico, 1 a 13 dígitos.
-        </span>
-      </div>
-    </div>
-
     <!--campo FechaFundacion-->
     <div class="form-group row">
-      <label class="col-form-label col-sm-2 offset-sm-2">
+      <label class="col-form-label col-sm-2 offset-sm-2" for="FechaFundacion">
         Fecha de Fundacion <span class="text-danger">*</span>
       </label>
       <div class="col-sm-6">
@@ -271,11 +185,7 @@
   </div>
 
   <!--texto: Revisar los datos ingresados...-->
-  <div
-    id="divMsjFormRegistro"
-    class="row alert alert-danger"
-    *ngIf="submitted && FormRegistro.invalid"
-  >
+  <div id="divMsjFormRegistro" class="row alert alert-danger" *ngIf="submitted && FormRegistro.invalid">
     <span class="fas fa-exclamation-sign"></span>{{Mensajes['RD']}}
   </div>
 </form>
