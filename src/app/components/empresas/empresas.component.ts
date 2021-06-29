@@ -40,7 +40,7 @@ export class EmpresasComponent implements OnInit {
     private modalDialogService: ModalDialogService
   ) {}
 
-  // CONTINUAR ACA/...
+
   ngOnInit() {
     this.FormRegistro = this.formBuilder.group({
       IdEmpresa: [null],
